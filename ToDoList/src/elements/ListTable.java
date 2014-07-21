@@ -11,7 +11,7 @@ public class ListTable extends AbstractTableModel {
 	private File file;
 	private String filename;
 
-	public ListTable(ToDoListe tdl, File file) {
+	public ListTable(ToDoList tdl, File file) {
 		todolist = new ArrayList<Eintrag>();
 		if (file != null) {
 			setFilename("");

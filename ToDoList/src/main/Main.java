@@ -1,6 +1,6 @@
 package main;
 
-import elements.ToDoListe;
+import elements.ToDoList;
 
 /**
  * Die Klasse Main fuehrt die Applikation aus.
@@ -11,7 +11,7 @@ import elements.ToDoListe;
 public class Main {
 
 	public static void main(String[] args) {
-		ToDoListe app = new ToDoListe();
+		ToDoList app = new ToDoList();
 	}
 
 }
