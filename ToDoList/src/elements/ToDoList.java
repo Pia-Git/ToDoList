@@ -112,7 +112,8 @@ public class ToDoList extends JFrame {
 		actual.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-
+				System.out.println("update!");
+				lt.fireTableDataChanged();
 			}
 		});
 

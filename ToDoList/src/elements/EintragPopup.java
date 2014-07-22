@@ -138,6 +138,7 @@ public class EintragPopup {
 							.getSelectedRow());
 					editE.setAufgabe(this.stringField.getText());
 					editE.setEndzeitpunkt(d);
+					editE.berechneRestzeit(d);
 					listTable.editEintrag(table.getSelectedRow(), editE);
 				}
 			}

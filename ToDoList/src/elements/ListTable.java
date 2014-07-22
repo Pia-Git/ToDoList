@@ -75,8 +75,10 @@ public class ListTable extends AbstractTableModel {
 		case 1:
 			return e.getEndzeitpunkt();
 		case 2:
-			// get restzeit
-			return 0;
+			if(e.getEnddate() != null){
+				e.berechneRestzeit(e.getEnddate());
+			}
+			return e.getRestzeit();
 		case 3:
 			return e.getErledigt();
 		default:
@@ -122,10 +124,6 @@ public class ListTable extends AbstractTableModel {
 
 	public ArrayList<Eintrag> getTodolist() {
 		return todolist;
-	}
-
-	public void berechneRestzeit() {
-
 	}
 
 	@Override
