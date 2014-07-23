@@ -71,10 +71,10 @@ public class EintragPopup {
 		dateField.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				System.out.println("click on dateField!");
-				CalendarPopup popup = new CalendarPopup(dateField);
+				if(isTime){
+					CalendarPopup popup = new CalendarPopup(dateField);
+				}
 			}
-
 		});
 
 		checkTime.addItemListener(new ItemListener() {

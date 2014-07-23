@@ -8,13 +8,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  * Die Klasse ToDoListe represaentiert die GUI, die die Liste als JTable
@@ -30,28 +33,31 @@ public class ToDoList extends JFrame {
 
 	JTable tablelist;
 	ListTable lt;
+	File currentFile;
+	ToDoList self;
 
 	private static final long serialVersionUID = 1L;
 
 	public ToDoList() {
+		self = this;
 		setTitle("ToDoListe");
 		setSize(700, 400);
 		centerWindow();
 		setLayout(new BorderLayout());
 
-		lt = new ListTable(this, null); // zuletzt bearbeitete ToDoListe wird
-										// geöffnet
+		lt = new ListTable(this, null); // zuletzt bearbeitete ToDoListe wird geoeffnet
 		tablelist = new JTable(lt);
 		JScrollPane scroll = new JScrollPane(tablelist);
 
 		// Button Panel
 		JPanel pane = new JPanel();
-		pane.setLayout(new GridLayout(7, 1));
+		pane.setLayout(new GridLayout(8, 1));
 		JButton add = new JButton("+");
 		JButton delete = new JButton("-");
 		JButton edit = new JButton("edit");
 		JButton deleteAll = new JButton("- (all)");
 		JButton actual = new JButton("update");
+		JButton open = new JButton("open");
 		JButton save = new JButton("save");
 		JButton website = new JButton("web");
 		pane.add(add);
@@ -59,6 +65,7 @@ public class ToDoList extends JFrame {
 		pane.add(edit);
 		pane.add(deleteAll);
 		pane.add(actual);
+		pane.add(open);
 		pane.add(save);
 		pane.add(website);
 
@@ -116,11 +123,35 @@ public class ToDoList extends JFrame {
 				lt.fireTableDataChanged();
 			}
 		});
+		
+		open.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				JFileChooser fc = new JFileChooser();
+			    FileNameExtensionFilter filter = new FileNameExtensionFilter(
+			            "ToDoLists", "todo");
+			    fc.setFileFilter(filter);
+			    int returnVal = fc.showOpenDialog(self);
+			    //wenn "oeffnen"
+			    if(returnVal == 0){
+			    	System.out.println("You chose to open this file: " + fc.getSelectedFile().getName());
+			    }
+			}
+		});
 
 		save.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-
+				JFileChooser fc = new JFileChooser();
+			    FileNameExtensionFilter filter = new FileNameExtensionFilter(
+			            "ToDoLists", "todo");
+			    fc.setFileFilter(filter);
+				fc.setSelectedFile(new File("Neue Liste"));
+			    int returnVal = fc.showSaveDialog(self);
+			    //wenn "speichern"
+			    if(returnVal == 0){
+			    	System.out.println("You chose to save this file: " + fc.getSelectedFile().getName());
+			    }
 			}
 		});
 
