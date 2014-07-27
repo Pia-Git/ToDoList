@@ -50,7 +50,6 @@ public class CalendarPopup extends JDialog {
 			e1.printStackTrace();
 		}
 
-		// JDayChooser jdc = new JDayChooser();
 		calendar.addPropertyChangeListener("calendar",
 				new PropertyChangeListener() {
 					@Override

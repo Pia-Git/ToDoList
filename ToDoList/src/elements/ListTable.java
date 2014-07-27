@@ -13,15 +13,14 @@ public class ListTable extends AbstractTableModel {
 
 	public ListTable(ToDoList tdl, File file) {
 		todolist = new ArrayList<Entry>();
-		if (file != null) {
+		if (file != null)
 			setFilename("");
-		}
 		// zuletzte bearbeitete todoliste öffnen
 		else {
 			// aus cache-Datei auslesen
 			// falls keine Datei vorhanden, neue Datei
-			tdl.setTitle("New ToDo - ToDoList");
-			setFilename("New ToDo");
+			tdl.setTitle("New List - ToDoList");
+			setFilename("New List");
 		}
 	}
 
@@ -130,18 +129,16 @@ public class ListTable extends AbstractTableModel {
 
 	@Override
 	public boolean isCellEditable(int row, int column) {
-		if (column == 3) {
+		if (column == 3)
 			return true;
-		} else {
+		else
 			return false;
-		}
 	}
 
 	@Override
 	public Class<?> getColumnClass(int column) {
-		if (column == 3) {
+		if (column == 3)
 			return Boolean.class;
-		}
 		return super.getColumnClass(column);
 	}
 

@@ -112,9 +112,8 @@ public class ToDoList extends JFrame {
 							"Do you want really delete complete list?",
 							"Delete all", JOptionPane.YES_NO_OPTION,
 							JOptionPane.PLAIN_MESSAGE);
-					if (result == 0) {
+					if (result == 0)
 						lt.clearTable(); // tabelle leeren
-					}
 				}
 			}
 		});
@@ -138,9 +137,26 @@ public class ToDoList extends JFrame {
 			    if(returnVal == 0){
 			    	File f = fc.getSelectedFile();
 			    	System.out.println("You chose to open this file: " + f.getName());
-			    	if(f.exists()){
-			    		fs.openFile(f);
-			    		lt.fillTable(fs.getDocEntries());
+			    	String ext = "";
+			    	String filename = "";
+			    	int i = f.getName().lastIndexOf('.');
+			    	if (i > 0) {
+			    	    ext = f.getName().substring(i+1);
+			    	    filename = f.getName().substring(0, i);
+			    	}
+			    	System.out.println("File-Extension: "+ext);
+			    	System.out.println("File-Name: "+filename);
+			    	if(ext.equals("todo")){
+			    		if(f.exists()){
+				    		fs.openFile(f);
+				    		setFileTitle(filename);
+				    		lt.fillTable(fs.getDocEntries());
+				    	}
+			    	}
+			    	else{
+			    		JOptionPane.showMessageDialog(fc, "ToDoList can't open " + f.getName() + 
+			    		          ". Only files with the .todo extension.", "No correct file",
+			    		          JOptionPane.WARNING_MESSAGE);
 			    	}
 			    }
 			}
@@ -170,10 +186,12 @@ public class ToDoList extends JFrame {
 				    		          JOptionPane.WARNING_MESSAGE);
 				    		if (response == JOptionPane.YES_OPTION){
 				    			fs.saveFile(lt.getTodolist(), newF);
+				    			setFileTitle(f.getName());
 				    		}
 				    	}
 				    	else{
 				    		fs.saveFile(lt.getTodolist(), newF);
+				    		setFileTitle(f.getName());
 				    	}
 				    }
 				}
@@ -193,6 +211,10 @@ public class ToDoList extends JFrame {
 				System.exit(0);
 			}
 		});
+	}
+	
+	public void setFileTitle(String t){
+		this.setTitle(t+" - ToDoList");
 	}
 
 	public void centerWindow() {

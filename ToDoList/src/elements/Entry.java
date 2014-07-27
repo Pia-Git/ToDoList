@@ -55,7 +55,7 @@ public class Entry {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-		if(done == "true")
+		if(done.equals("true"))
 			isErledigt = true;
 		else
 			isErledigt = false;
@@ -90,12 +90,10 @@ public class Entry {
 	}
 	
 	public void setRestzeit(String restzeit) {
-		if (this.endzeitpunkt == ""){
+		if (this.endzeitpunkt == "")
 			this.restzeit = "";
-		}
-		else {
+		else
 			this.restzeit = restzeit;
-		}
 	}
 	
 	public String getRestzeit() {
@@ -146,11 +144,10 @@ public class Entry {
 		long minutes = (diff-days*1000*60*60*24-hours*1000*60*60)/(1000*60);
 		String rest = "";
 		if(days == 0){
-			if(hours == 0){
+			if(hours == 0)
 				rest = minutes + "m";
-			}else{
+			else
 				rest = hours + "h" + minutes + "m";
-			}
 		}else{
 			rest = days + "d" + hours + "h" + minutes + "m";
 		}

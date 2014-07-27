@@ -33,8 +33,6 @@ import elements.Entry;
  */
 public class FileServer {
 
-	/*FileOutputStream fop;
-	File file;*/
 	private DocumentBuilder docBuilder;
 	private ArrayList<Entry> docEntries;
 
@@ -129,11 +127,6 @@ public class FileServer {
 					String todo = eElement.getElementsByTagName("todo").item(0).getTextContent();
 					String end = eElement.getElementsByTagName("endtime").item(0).getTextContent();
 					String done = eElement.getElementsByTagName("done").item(0).getTextContent();
-					System.out.println("Entry id : " + eElement.getAttribute("id"));
-					System.out.println("Todo : " + todo);
-					System.out.println("Endtime : " + end);
-					System.out.println("Remaining : " + eElement.getElementsByTagName("remaining").item(0).getTextContent());
-					System.out.println("Done : " + done);
 					Entry newEntry = new Entry(todo, end, done);
 					docEntries.add(newEntry);
 				}
