@@ -19,6 +19,8 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
+import com.toedter.components.JSpinField;
+
 /**
  * Die Klasse EintragPopup represaentiert einen Popup fuer die Erstellung eines
  * Listeneintrages in Form einer JOptionPane. Diese beinhaltet JTextfields fuer
@@ -31,7 +33,8 @@ public class EintragPopup {
 
 	JTextField stringField;
 	JTextField dateField;
-	JTextField timeField;
+	JSpinField hourField;
+	JSpinField minuteField;
 	JCheckBox checkTime;
 	DateFormat dateFormat;
 	JTable table;
@@ -44,9 +47,10 @@ public class EintragPopup {
 		newEintrag = neu;
 		stringField = new JTextField(20);
 		dateField = new JTextField(10);
-		timeField = new JTextField(10);
+		hourField = new JSpinField(0,23);
+		minuteField = new JSpinField(0,59);
 		checkTime = new JCheckBox();
-		dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+		dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 		table = tab;
 		listTable = (ListTable) tab.getModel();
 
@@ -58,10 +62,13 @@ public class EintragPopup {
 		task.add(new JLabel("ToDo:"));
 		task.add(stringField);
 		JPanel endTime = new JPanel();
-		endTime.add(new JLabel("Enddatum:"));
+		endTime.add(new JLabel("Finish date:"));
 		endTime.add(dateField);
-		endTime.add(new JLabel("Uhrzeit:"));
-		endTime.add(timeField);
+		endTime.add(new JLabel("End time:"));
+		endTime.add(hourField);
+		endTime.add(new JLabel("h"));
+		endTime.add(minuteField);
+		endTime.add(new JLabel("m"));
 		endTime.add(checkTime);
 		myPanel.add(task);
 		myPanel.add(endTime);
@@ -84,12 +91,13 @@ public class EintragPopup {
 				if (cb.isSelected()) {
 					isTime = true;
 					dateField.setEnabled(true);
-					timeField.setEnabled(true);
-					System.out.println("ui selected checkbox!");
+					hourField.setEnabled(true);
+					minuteField.setEnabled(true);
 				} else {
 					isTime = false;
 					dateField.setEnabled(false);
-					timeField.setEnabled(false);
+					hourField.setEnabled(false);
+					minuteField.setEnabled(false);
 				}
 			}
 		});
@@ -97,7 +105,7 @@ public class EintragPopup {
 		// wenn auf OK geklickt
 
 		int result = JOptionPane.showConfirmDialog(null, myPanel,
-				"Listeneintrag erstellen", JOptionPane.OK_CANCEL_OPTION,
+				"Create ToDo", JOptionPane.OK_CANCEL_OPTION,
 				JOptionPane.PLAIN_MESSAGE);
 
 		if (result == JOptionPane.OK_OPTION) {
@@ -107,20 +115,17 @@ public class EintragPopup {
 				if (isTime) {
 					try {
 						d = dateFormat.parse(dateField.getText());
-						if (!timeField.getText().equals("")) {
-							Calendar gc = new GregorianCalendar();
-							gc.setTime(d);
-							int year = gc.get(Calendar.YEAR);
-							int month = gc.get(Calendar.MONTH);
-							int day = gc.get(Calendar.DAY_OF_MONTH);
-							// get hours and minutes from textfield
-							String[] time = timeField.getText().split(":");
-							int hour = Integer.parseInt(time[0]);
-							int min = Integer.parseInt(time[1]);
-							gc.set(year, month, day, hour, min, 0);
-							// setz Datum mit Zeit
-							d = gc.getTime();
-						}
+						Calendar gc = new GregorianCalendar();
+						gc.setTime(d);
+						int year = gc.get(Calendar.YEAR);
+						int month = gc.get(Calendar.MONTH);
+						int day = gc.get(Calendar.DAY_OF_MONTH);
+						// get hours and minutes
+						int hour = hourField.getValue();
+						int min = minuteField.getValue();
+						gc.set(year, month, day, hour, min, 0);
+						// setz Datum mit Zeit
+						d = gc.getTime();
 					} catch (ParseException e1) {
 						e1.printStackTrace();
 					}
@@ -150,19 +155,23 @@ public class EintragPopup {
 			// Default
 			Date date = new Date();
 			this.dateField.setText(this.dateFormat.format(date));
-			this.timeField.setText("23:59");
+			this.hourField.setValue(23);
+			this.minuteField.setValue(59);
 			this.checkTime.setSelected(true);
 		} else {
 			Eintrag editE = listTable.getEintragAt(table.getSelectedRow());
 			this.stringField.setText(editE.getAufgabe());
 			this.dateField.setText(editE.getEndzeitpunkt());
-			this.timeField.setText(editE.getTime());
+			this.hourField.setValue(editE.getHour());
+			this.minuteField.setValue(editE.getMinute());
 			if (!editE.withTime()) {
 				Date date = new Date();
 				this.dateField.setText(this.dateFormat.format(date));
-				this.timeField.setText("23:59");
+				this.hourField.setValue(23);
+				this.minuteField.setValue(59);
 				this.dateField.setEnabled(false);
-				this.timeField.setEnabled(false);
+				this.hourField.setEnabled(false);
+				this.minuteField.setEnabled(false);
 			}
 			this.checkTime.setSelected(editE.withTime());
 		}

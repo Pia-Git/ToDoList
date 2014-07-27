@@ -35,14 +35,14 @@ public class CalendarPopup extends JDialog {
 	public CalendarPopup(final JTextField tf) {
 		field = tf;
 		calendar = new JCalendar();
-		setTitle("Bitte Datum auswählen");
+		setTitle("Please choose Date");
 		setModal(true);
 		setSize(350, 350);
 		centerWindow();
 
 		// set old date from textfield
 		String old = field.getText();
-		DateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+		DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 		try {
 			Date oldDate = format.parse(old);
 			calendar.setDate(oldDate);
@@ -68,7 +68,7 @@ public class CalendarPopup extends JDialog {
 						currentDate = gc.getTime();
 						if (newDate.getTime() >= currentDate.getTime()) {
 							DateFormat format = new SimpleDateFormat(
-									"dd.MM.yyyy");
+									"dd/MM/yyyy");
 							format.format(newDate);
 							System.out.println(format.format(c.getTime()));
 							field.setText(format.format(c.getTime()));

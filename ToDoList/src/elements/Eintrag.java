@@ -21,6 +21,8 @@ public class Eintrag {
 	private Date enddate;
 	private String time;
 	private String restzeit;
+	private int hour;
+	private int minute;
 	private boolean isErledigt = false;
 	private boolean withTime = true;
 
@@ -41,6 +43,14 @@ public class Eintrag {
 
 	public String getAufgabe() {
 		return aufgabe;
+	}
+	
+	public int getHour() {
+		return hour;
+	}
+	
+	public int getMinute() {
+		return minute;
 	}
 
 	public void setAufgabe(String aufgabe) {
@@ -98,16 +108,17 @@ public class Eintrag {
 	}
 
 	public String toString(Date enddatum) {
-		DateFormat format = new SimpleDateFormat("dd.MM.yyyy (HH:mm)");
+		DateFormat format = new SimpleDateFormat("dd/MM/yyyy (HH:mm)");
 		DateFormat timeFormat = new SimpleDateFormat("HH:mm");
 		time = timeFormat.format(enddatum);
+		String[] timeArray = time.split(":");
+		hour = Integer.parseInt(timeArray[0]);
+		minute = Integer.parseInt(timeArray[1]);
 		return format.format(enddatum);
 	}
 	
 	public void berechneRestzeit(Date end) {
 		Date now = new Date(); //current date
-		System.out.println("aktuelles datum: "+now);
-		System.out.println("end datum: "+end);
 		long diff = end.getTime() - now.getTime(); //milliseconds
 		long days = diff/(1000*60*60*24);
 		long hours = (diff-days*1000*60*60*24)/(1000*60*60);

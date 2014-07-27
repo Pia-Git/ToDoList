@@ -20,8 +20,8 @@ public class ListTable extends AbstractTableModel {
 		else {
 			// aus cache-Datei auslesen
 			// falls keine Datei vorhanden, neue Datei
-			tdl.setTitle("Neue Liste - ToDoListe");
-			setFilename("Neue Liste");
+			tdl.setTitle("New ToDo - ToDoList");
+			setFilename("New ToDo");
 		}
 	}
 
@@ -99,13 +99,13 @@ public class ListTable extends AbstractTableModel {
 	public String getColumnName(int column) {
 		switch (column) {
 		case 0:
-			return "Aufgabe";
+			return "ToDo";
 		case 1:
-			return "Endzeitpunkt";
+			return "End time";
 		case 2:
-			return "Restzeit";
+			return "Remaining time";
 		default:
-			return "erledigt";
+			return "Done";
 		}
 	}
 

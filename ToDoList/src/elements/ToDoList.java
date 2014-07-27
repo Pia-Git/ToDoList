@@ -19,6 +19,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import cache.FileServer;
+
 /**
  * Die Klasse ToDoListe represaentiert die GUI, die die Liste als JTable
  * anzeigt. Per Button kann der Anwender neue Listeneintraege erstellen, bereits
@@ -35,12 +37,14 @@ public class ToDoList extends JFrame {
 	ListTable lt;
 	File currentFile;
 	ToDoList self;
+	FileServer fs;
 
 	private static final long serialVersionUID = 1L;
 
 	public ToDoList() {
 		self = this;
-		setTitle("ToDoListe");
+		fs = new FileServer();
+		setTitle("ToDoList");
 		setSize(700, 400);
 		centerWindow();
 		setLayout(new BorderLayout());
@@ -105,12 +109,11 @@ public class ToDoList extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				if (!lt.isEmpty()) {
 					int result = JOptionPane.showConfirmDialog(null,
-							"Wirklich die komplette Liste löschen?",
-							"Liste löschen", JOptionPane.YES_NO_OPTION,
+							"Do you want really delete complete list?",
+							"Delete all", JOptionPane.YES_NO_OPTION,
 							JOptionPane.PLAIN_MESSAGE);
 					if (result == 0) {
 						lt.clearTable(); // tabelle leeren
-						System.out.println("Liste gelöscht!");
 					}
 				}
 			}
@@ -119,7 +122,6 @@ public class ToDoList extends JFrame {
 		actual.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				System.out.println("update!");
 				lt.fireTableDataChanged();
 			}
 		});
@@ -142,16 +144,52 @@ public class ToDoList extends JFrame {
 		save.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				JFileChooser fc = new JFileChooser();
-			    FileNameExtensionFilter filter = new FileNameExtensionFilter(
-			            "ToDoLists", "todo");
-			    fc.setFileFilter(filter);
-				fc.setSelectedFile(new File("Neue Liste"));
-			    int returnVal = fc.showSaveDialog(self);
-			    //wenn "speichern"
-			    if(returnVal == 0){
-			    	System.out.println("You chose to save this file: " + fc.getSelectedFile().getName());
-			    }
+				if (!lt.isEmpty()) {
+					JFileChooser fc = new JFileChooser();
+				    FileNameExtensionFilter filter = new FileNameExtensionFilter(
+				            "ToDoLists", "todo");
+				    fc.setFileFilter(filter);
+					fc.setSelectedFile(new File("New List"));
+				    int returnVal = fc.showSaveDialog(self);
+				    //wenn "speichern"
+				    if(returnVal == 0){
+				    	File f = fc.getSelectedFile();
+				    	System.out.println("You chose to save this file: " + f.getAbsolutePath());
+				    	File newF = new File(f.getAbsoluteFile()+".todo");
+				    	//overwrite?
+				    	if(newF.exists()){
+				    		int response = JOptionPane.showConfirmDialog(fc,
+				    		          "The file " + f.getName() + 
+				    		          " already exists. Do you want overwrite the existing file?",
+				    		          "Overwrite file", JOptionPane.YES_NO_OPTION,
+				    		          JOptionPane.WARNING_MESSAGE);
+				    		if (response == JOptionPane.YES_OPTION){
+				    			fs.saveFile(lt.getTodolist(), newF);
+				    		}
+				    	}
+				    	else{
+				    		fs.saveFile(lt.getTodolist(), newF);
+				    	}
+				    	
+				    	/*
+				    	 @Override public void approveSelection() {
+				    		    if (getDialogType() == SAVE_DIALOG) {
+				    		      File selectedFile = getSelectedFile();
+				    		      if ((selectedFile != null) && selectedFile.exists()) {
+				    		        int response = JOptionPane.showConfirmDialog(this,
+				    		          "The file " + selectedFile.getName() + 
+				    		          " already exists. Do you want to replace the existing file?",
+				    		          "Ovewrite file", JOptionPane.YES_NO_OPTION,
+				    		          JOptionPane.WARNING_MESSAGE);
+				    		        if (response != JOptionPane.YES_OPTION)
+				    		          return;
+				    		      }
+				    		    }
+				    	
+				    	*/
+				    	
+				    }
+				}
 			}
 		});
 
