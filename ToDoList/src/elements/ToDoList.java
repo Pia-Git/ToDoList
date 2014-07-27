@@ -82,7 +82,7 @@ public class ToDoList extends JFrame {
 		add.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				EintragPopup popup = new EintragPopup(tablelist, true);
+				EntryPopup popup = new EntryPopup(tablelist, true);
 			}
 		});
 
@@ -99,7 +99,7 @@ public class ToDoList extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if (tablelist.getSelectedRow() > -1) {
-					EintragPopup popup = new EintragPopup(tablelist, false);
+					EntryPopup popup = new EntryPopup(tablelist, false);
 				}
 			}
 		});
@@ -136,7 +136,12 @@ public class ToDoList extends JFrame {
 			    int returnVal = fc.showOpenDialog(self);
 			    //wenn "oeffnen"
 			    if(returnVal == 0){
-			    	System.out.println("You chose to open this file: " + fc.getSelectedFile().getName());
+			    	File f = fc.getSelectedFile();
+			    	System.out.println("You chose to open this file: " + f.getName());
+			    	if(f.exists()){
+			    		fs.openFile(f);
+			    		lt.fillTable(fs.getDocEntries());
+			    	}
 			    }
 			}
 		});
@@ -170,24 +175,6 @@ public class ToDoList extends JFrame {
 				    	else{
 				    		fs.saveFile(lt.getTodolist(), newF);
 				    	}
-				    	
-				    	/*
-				    	 @Override public void approveSelection() {
-				    		    if (getDialogType() == SAVE_DIALOG) {
-				    		      File selectedFile = getSelectedFile();
-				    		      if ((selectedFile != null) && selectedFile.exists()) {
-				    		        int response = JOptionPane.showConfirmDialog(this,
-				    		          "The file " + selectedFile.getName() + 
-				    		          " already exists. Do you want to replace the existing file?",
-				    		          "Ovewrite file", JOptionPane.YES_NO_OPTION,
-				    		          JOptionPane.WARNING_MESSAGE);
-				    		        if (response != JOptionPane.YES_OPTION)
-				    		          return;
-				    		      }
-				    		    }
-				    	
-				    	*/
-				    	
 				    }
 				}
 			}

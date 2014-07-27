@@ -1,6 +1,7 @@
 package elements;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -14,7 +15,7 @@ import java.util.concurrent.TimeUnit;
  * @author Pia
  * 
  */
-public class Eintrag {
+public class Entry {
 
 	private String aufgabe;
 	private String endzeitpunkt;
@@ -26,7 +27,7 @@ public class Eintrag {
 	private boolean isErledigt = false;
 	private boolean withTime = true;
 
-	public Eintrag(String str, Date t) {
+	public Entry(String str, Date t) {
 		aufgabe = str;
 		if (t == null) {
 			withTime = false;
@@ -39,6 +40,25 @@ public class Eintrag {
 			enddate = t;
 			berechneRestzeit(t);
 		}
+	}
+	
+	public Entry(String aufgabe, String enddate, String done) {
+		this.aufgabe = aufgabe;
+		//datum aus string filtern
+		try {
+			Date end = null;
+			if(!enddate.equals("0")){
+				end = new SimpleDateFormat("dd/MM/yyyy (HH:mm)").parse(enddate);
+				berechneRestzeit(end);
+			}
+			setEndzeitpunkt(end);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		if(done == "true")
+			isErledigt = true;
+		else
+			isErledigt = false;
 	}
 
 	public String getAufgabe() {
@@ -87,6 +107,7 @@ public class Eintrag {
 			withTime = false;
 			this.endzeitpunkt = "";
 			this.enddate = null;
+			this.restzeit = "";
 			time = "";
 		} else {
 			withTime = true;

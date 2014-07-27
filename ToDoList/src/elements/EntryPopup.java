@@ -29,7 +29,7 @@ import com.toedter.components.JSpinField;
  * @author Pia
  * 
  */
-public class EintragPopup {
+public class EntryPopup {
 
 	JTextField stringField;
 	JTextField dateField;
@@ -42,7 +42,7 @@ public class EintragPopup {
 	boolean isTime = true;
 	boolean newEintrag = true;
 
-	public EintragPopup(JTable tab, boolean neu) {
+	public EntryPopup(JTable tab, boolean neu) {
 
 		newEintrag = neu;
 		stringField = new JTextField(20);
@@ -133,17 +133,19 @@ public class EintragPopup {
 
 				// Eintrag in Tabelle hinzufuegen falls neuer Eintrag
 				if (this.newEintrag) {
-					Eintrag e = new Eintrag(stringField.getText(), d);
-					listTable.addEintrag(e);
+					Entry e = new Entry(stringField.getText(), d);
+					listTable.addEntry(e);
 				}
 				// ansonsten Eintrag veraendern
 				else {
 					// todo
-					Eintrag editE = listTable.getEintragAt(table
+					Entry editE = listTable.getEintragAt(table
 							.getSelectedRow());
 					editE.setAufgabe(this.stringField.getText());
 					editE.setEndzeitpunkt(d);
-					editE.berechneRestzeit(d);
+					if(d != null){
+						editE.berechneRestzeit(d);
+					}
 					listTable.editEintrag(table.getSelectedRow(), editE);
 				}
 			}
@@ -159,7 +161,7 @@ public class EintragPopup {
 			this.minuteField.setValue(59);
 			this.checkTime.setSelected(true);
 		} else {
-			Eintrag editE = listTable.getEintragAt(table.getSelectedRow());
+			Entry editE = listTable.getEintragAt(table.getSelectedRow());
 			this.stringField.setText(editE.getAufgabe());
 			this.dateField.setText(editE.getEndzeitpunkt());
 			this.hourField.setValue(editE.getHour());

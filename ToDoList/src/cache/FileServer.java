@@ -19,8 +19,11 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
-import elements.Eintrag;
+import elements.Entry;
 
 /**
  * Die Klasse FileServer speichert die Listeneinträge in einer XML-Datei ab.
@@ -32,7 +35,8 @@ public class FileServer {
 
 	/*FileOutputStream fop;
 	File file;*/
-	DocumentBuilder docBuilder;
+	private DocumentBuilder docBuilder;
+	private ArrayList<Entry> docEntries;
 
 	public FileServer() {
 		try {
@@ -56,13 +60,13 @@ public class FileServer {
 
 	}
 	
-	public void saveFile (ArrayList<Eintrag> list, File file){
+	public void saveFile (ArrayList<Entry> list, File file){
 		System.out.println("save xml file method");
 		Document doc = docBuilder.newDocument();
 		Element rootElement = doc.createElement("list");
 		doc.appendChild(rootElement);
 		int counter = 0;
-		for(Eintrag e : list){
+		for(Entry e : list){
 			//entry
 			Element entry = doc.createElement("entry");
 			rootElement.appendChild(entry);
@@ -72,10 +76,16 @@ public class FileServer {
 			todo.appendChild(doc.createTextNode(e.getAufgabe()));
 			entry.appendChild(todo);
 			Element endtime = doc.createElement("endtime");
-			endtime.appendChild(doc.createTextNode(e.getEndzeitpunkt()));
+			String endzeit = e.getEndzeitpunkt();
+			String restzeit = e.getRestzeit();
+			if(e.getEndzeitpunkt() == ""){
+				endzeit = "0";
+				restzeit = "0";
+			}
+			endtime.appendChild(doc.createTextNode(endzeit));
 			entry.appendChild(endtime);
 			Element remaining = doc.createElement("remaining");
-			remaining.appendChild(doc.createTextNode(e.getRestzeit()));
+			remaining.appendChild(doc.createTextNode(restzeit));
 			entry.appendChild(remaining);
 			Element done = doc.createElement("done");
 			done.appendChild(doc.createTextNode(String.valueOf(e.getErledigt())));
@@ -99,9 +109,42 @@ public class FileServer {
 		}
 	}
 	
-	public void openFile () {
+	public void openFile (File file) {
 		System.out.println("open xml file method");
-		
+		docEntries = new ArrayList<Entry>();
+		try {
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder;
+			dBuilder = dbFactory.newDocumentBuilder();
+			Document doc = dBuilder.parse(file);
+			doc.getDocumentElement().normalize();
+			System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
+			NodeList nList = doc.getElementsByTagName("entry");
+			System.out.println("----------------------------");
+			for (int temp = 0; temp < nList.getLength(); temp++) {
+				Node nNode = nList.item(temp);
+				System.out.println("\nCurrent Element :" + nNode.getNodeName());
+				if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+					Element eElement = (Element) nNode;
+					String todo = eElement.getElementsByTagName("todo").item(0).getTextContent();
+					String end = eElement.getElementsByTagName("endtime").item(0).getTextContent();
+					String done = eElement.getElementsByTagName("done").item(0).getTextContent();
+					System.out.println("Entry id : " + eElement.getAttribute("id"));
+					System.out.println("Todo : " + todo);
+					System.out.println("Endtime : " + end);
+					System.out.println("Remaining : " + eElement.getElementsByTagName("remaining").item(0).getTextContent());
+					System.out.println("Done : " + done);
+					Entry newEntry = new Entry(todo, end, done);
+					docEntries.add(newEntry);
+				}
+			}
+		} catch (ParserConfigurationException | SAXException | IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public ArrayList<Entry> getDocEntries(){
+		return docEntries;
 	}
 }
 

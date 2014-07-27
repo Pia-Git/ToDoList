@@ -7,12 +7,12 @@ import javax.swing.table.AbstractTableModel;
 
 public class ListTable extends AbstractTableModel {
 
-	private ArrayList<Eintrag> todolist;
+	private ArrayList<Entry> todolist;
 	private File file;
 	private String filename;
 
 	public ListTable(ToDoList tdl, File file) {
-		todolist = new ArrayList<Eintrag>();
+		todolist = new ArrayList<Entry>();
 		if (file != null) {
 			setFilename("");
 		}
@@ -26,10 +26,12 @@ public class ListTable extends AbstractTableModel {
 	}
 
 	// Tabledaten aus Datei einlesen
-	public void initTable() {
-		// falls datei existiert
-		// benutzerabfrage, ob neues file anlegen oder vorhandenes file öffnen
-		// oder nur ein gewisser programmordner wo files abgespeichert werden
+	public void fillTable(ArrayList<Entry> newList) {
+		todolist = new ArrayList<Entry>(); //erstmal leeren
+		for(Entry e : newList){
+			addEntry(e);
+		}
+		System.out.println("Table filled!");
 	}
 
 	public void clearTable() {
@@ -60,14 +62,14 @@ public class ListTable extends AbstractTableModel {
 		return todolist.size();
 	}
 
-	public Eintrag getEintragAt(int rowIndex) {
+	public Entry getEintragAt(int rowIndex) {
 		return todolist.get(rowIndex);
 	}
 
 	@Override
 	public Object getValueAt(int rowIndex, int colIndex) {
 		// Eintrag der Zeile
-		Eintrag e = todolist.get(rowIndex);
+		Entry e = todolist.get(rowIndex);
 		// Attribut des Eintrags in der jeweiligen Spalte
 		switch (colIndex) {
 		case 0:
@@ -89,7 +91,7 @@ public class ListTable extends AbstractTableModel {
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 		if (columnIndex == 3) {
-			Eintrag e = getEintragAt(rowIndex);
+			Entry e = getEintragAt(rowIndex);
 			e.setErledigt((boolean) aValue);
 			fireTableRowsUpdated(rowIndex, rowIndex);
 		}
@@ -109,7 +111,7 @@ public class ListTable extends AbstractTableModel {
 		}
 	}
 
-	public void addEintrag(Eintrag e) {
+	public void addEntry(Entry e) {
 		// Eintrag der Liste hinzufuegen
 		todolist.add(e);
 		// Event an Listener abschicken, Eintrag wird am Ende der Liste
@@ -117,12 +119,12 @@ public class ListTable extends AbstractTableModel {
 		fireTableRowsInserted(todolist.size(), todolist.size());
 	}
 
-	public void editEintrag(int row, Eintrag e) {
+	public void editEintrag(int row, Entry e) {
 		todolist.set(row, e);
 		fireTableRowsUpdated(row, row);
 	}
 
-	public ArrayList<Eintrag> getTodolist() {
+	public ArrayList<Entry> getTodolist() {
 		return todolist;
 	}
 
