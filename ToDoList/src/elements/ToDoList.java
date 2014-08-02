@@ -55,7 +55,7 @@ public class ToDoList extends JFrame {
 		centerWindow();
 		setLayout(new BorderLayout());
 
-		lt = new ListTable(this, null); // zuletzt bearbeitete ToDoListe wird geoeffnet
+		lt = new ListTable();
 		tablelist = new JTable(lt);
 		JScrollPane scroll = new JScrollPane(tablelist);
 
@@ -190,7 +190,7 @@ public class ToDoList extends JFrame {
 		else{
 			WelcomePopup wp = new WelcomePopup(this);
 			if(!isInitialized){
-				fileTitle = "New List";
+				setFileTitle("New List");
 				lt.setModified(true);
 			}
 		}

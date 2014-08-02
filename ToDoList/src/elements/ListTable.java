@@ -9,21 +9,10 @@ public class ListTable extends AbstractTableModel {
 
 	private static final long serialVersionUID = 1L;
 	private ArrayList<Entry> todolist;
-	private File file;
-	private String filename;
 	private Boolean modified = false;
 
-	public ListTable(ToDoList tdl, File file) {
+	public ListTable() {
 		todolist = new ArrayList<Entry>();
-		if (file != null)
-			setFilename("");
-		// zuletzte bearbeitete todoliste öffnen
-		else {
-			// aus cache-Datei auslesen
-			// falls keine Datei vorhanden, neue Datei
-			tdl.setTitle("New List - ToDoList");
-			setFilename("New List");
-		}
 	}
 	
 	public Boolean getModified(){
@@ -159,14 +148,6 @@ public class ListTable extends AbstractTableModel {
 		if (column == 3)
 			return Boolean.class;
 		return super.getColumnClass(column);
-	}
-
-	public String getFilename() {
-		return filename;
-	}
-
-	public void setFilename(String filename) {
-		this.filename = filename;
 	}
 
 }
