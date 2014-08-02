@@ -4,8 +4,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Die Klasse Eintrag represaentiert einen Listeneintrag, welches die
@@ -44,7 +42,7 @@ public class Entry {
 	
 	public Entry(String aufgabe, String enddate, String done) {
 		this.aufgabe = aufgabe;
-		//datum aus string filtern
+		//get date from string
 		try {
 			Date end = null;
 			if(!enddate.equals("0")){
@@ -143,13 +141,18 @@ public class Entry {
 		long hours = (diff-days*1000*60*60*24)/(1000*60*60);
 		long minutes = (diff-days*1000*60*60*24-hours*1000*60*60)/(1000*60);
 		String rest = "";
-		if(days == 0){
-			if(hours == 0)
-				rest = minutes + "m";
-			else
-				rest = hours + "h" + minutes + "m";
-		}else{
-			rest = days + "d" + hours + "h" + minutes + "m";
+		if(days < 0 || hours < 0 || minutes < 0){
+			rest = "0m";
+		}
+		else{
+			if(days == 0){
+				if(hours == 0)
+					rest = minutes + "m";
+				else
+					rest = hours + "h" + minutes + "m";
+			}else{
+				rest = days + "d" + hours + "h" + minutes + "m";
+			}
 		}
 		setRestzeit(rest);
 	}

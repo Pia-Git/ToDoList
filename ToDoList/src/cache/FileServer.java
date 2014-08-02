@@ -1,8 +1,6 @@
 package cache;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -16,7 +14,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -35,6 +32,7 @@ public class FileServer {
 
 	private DocumentBuilder docBuilder;
 	private ArrayList<Entry> docEntries;
+	private File currentFile ;
 
 	public FileServer() {
 		try {
@@ -43,29 +41,20 @@ public class FileServer {
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
 		}
-
-		/*try {
-			file = new File("c:/newfile.xml");
-			fop = new FileOutputStream(file);
-			if (!file.exists()) {
-				file.createNewFile();
-			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}*/
-
+	}
+	
+	public File getCurrentFile(){
+		return currentFile;
 	}
 	
 	public void saveFile (ArrayList<Entry> list, File file){
 		System.out.println("save xml file method");
 		Document doc = docBuilder.newDocument();
 		Element rootElement = doc.createElement("list");
+		currentFile = file;
 		doc.appendChild(rootElement);
 		int counter = 0;
 		for(Entry e : list){
-			//entry
 			Element entry = doc.createElement("entry");
 			rootElement.appendChild(entry);
 			entry.setAttribute("id", String.valueOf(counter));
@@ -110,18 +99,16 @@ public class FileServer {
 	public void openFile (File file) {
 		System.out.println("open xml file method");
 		docEntries = new ArrayList<Entry>();
+		currentFile = file;
 		try {
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder;
 			dBuilder = dbFactory.newDocumentBuilder();
 			Document doc = dBuilder.parse(file);
 			doc.getDocumentElement().normalize();
-			System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
 			NodeList nList = doc.getElementsByTagName("entry");
-			System.out.println("----------------------------");
 			for (int temp = 0; temp < nList.getLength(); temp++) {
 				Node nNode = nList.item(temp);
-				System.out.println("\nCurrent Element :" + nNode.getNodeName());
 				if (nNode.getNodeType() == Node.ELEMENT_NODE) {
 					Element eElement = (Element) nNode;
 					String todo = eElement.getElementsByTagName("todo").item(0).getTextContent();

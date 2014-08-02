@@ -7,9 +7,11 @@ import javax.swing.table.AbstractTableModel;
 
 public class ListTable extends AbstractTableModel {
 
+	private static final long serialVersionUID = 1L;
 	private ArrayList<Entry> todolist;
 	private File file;
 	private String filename;
+	private Boolean modified = false;
 
 	public ListTable(ToDoList tdl, File file) {
 		todolist = new ArrayList<Entry>();
@@ -23,12 +25,20 @@ public class ListTable extends AbstractTableModel {
 			setFilename("New List");
 		}
 	}
+	
+	public Boolean getModified(){
+		return modified;
+	}
+	
+	public void setModified(Boolean mod){
+		modified = mod;
+	}
 
 	// Tabledaten aus Datei einlesen
 	public void fillTable(ArrayList<Entry> newList) {
 		todolist = new ArrayList<Entry>(); //erstmal leeren
 		for(Entry e : newList){
-			addEntry(e);
+			fillTableWithEntry(e);
 		}
 		System.out.println("Table filled!");
 	}
@@ -37,6 +47,7 @@ public class ListTable extends AbstractTableModel {
 		for (int i = this.getRowCount() - 1; i >= 0; i--) {
 			removeRow(i);
 		}
+		modified = true;
 	}
 
 	public boolean isEmpty() {
@@ -46,6 +57,7 @@ public class ListTable extends AbstractTableModel {
 	public void removeRow(int row) {
 		fireTableRowsDeleted(row, row + 1);
 		todolist.remove(row);
+		modified = true;
 	}
 
 	@Override
@@ -109,18 +121,25 @@ public class ListTable extends AbstractTableModel {
 			return "Done";
 		}
 	}
-
+	
+	public void fillTableWithEntry(Entry e){
+		todolist.add(e);
+		fireTableRowsInserted(todolist.size(), todolist.size());
+	}
+	
 	public void addEntry(Entry e) {
 		// Eintrag der Liste hinzufuegen
 		todolist.add(e);
 		// Event an Listener abschicken, Eintrag wird am Ende der Liste
 		// angefuegt
 		fireTableRowsInserted(todolist.size(), todolist.size());
+		modified = true;
 	}
 
-	public void editEintrag(int row, Entry e) {
+	public void editEntry(int row, Entry e) {
 		todolist.set(row, e);
 		fireTableRowsUpdated(row, row);
+		modified = true;
 	}
 
 	public ArrayList<Entry> getTodolist() {

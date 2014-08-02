@@ -146,7 +146,7 @@ public class EntryPopup {
 					if(d != null){
 						editE.berechneRestzeit(d);
 					}
-					listTable.editEintrag(table.getSelectedRow(), editE);
+					listTable.editEntry(table.getSelectedRow(), editE);
 				}
 			}
 		}
@@ -163,7 +163,7 @@ public class EntryPopup {
 		} else {
 			Entry editE = listTable.getEintragAt(table.getSelectedRow());
 			this.stringField.setText(editE.getAufgabe());
-			this.dateField.setText(editE.getEndzeitpunkt());
+			this.dateField.setText(this.dateFormat.format(editE.getEnddate()));
 			this.hourField.setValue(editE.getHour());
 			this.minuteField.setValue(editE.getMinute());
 			if (!editE.withTime()) {
