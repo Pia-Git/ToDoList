@@ -32,7 +32,8 @@ public class FileServer {
 
 	private DocumentBuilder docBuilder;
 	private ArrayList<Entry> docEntries;
-	private File currentFile ;
+	private File currentFile;
+	private String listName;
 
 	public FileServer() {
 		try {
@@ -47,10 +48,29 @@ public class FileServer {
 		return currentFile;
 	}
 	
+	public String getFileName(File f){
+		String filename = "";
+		int i = f.getName().lastIndexOf('.');
+    	if (i > 0) {
+    	    filename = f.getName().substring(0, i);
+    	}
+    	return filename;
+	}
+	
+	public String getFileExtension(File f){
+		String ext = "";
+    	int i = f.getName().lastIndexOf('.');
+    	if (i > 0) {
+    	    ext = f.getName().substring(i+1);
+    	}
+    	return ext;
+	}
+	
 	public void saveFile (ArrayList<Entry> list, File file){
 		System.out.println("save xml file method");
 		Document doc = docBuilder.newDocument();
 		Element rootElement = doc.createElement("list");
+		rootElement.setAttribute("path", file.getAbsolutePath());
 		currentFile = file;
 		doc.appendChild(rootElement);
 		int counter = 0;
@@ -79,7 +99,12 @@ public class FileServer {
 			entry.appendChild(done);
 			counter++;
 		}
-		//write xml document
+		saveCache(doc);
+		writeXML(doc, file);
+		System.out.println("File saved!");
+	}
+	
+	public void writeXML (Document doc, File file){
 		try {
 			TransformerFactory transformerFactory = TransformerFactory.newInstance();
 			Transformer transformer = transformerFactory.newTransformer();
@@ -88,7 +113,6 @@ public class FileServer {
 			//StreamResult result = new StreamResult(System.out);
 			StreamResult result = new StreamResult(file);
 			transformer.transform(source, result);
-			System.out.println("File saved!");
 		} catch (TransformerConfigurationException e1) {
 			e1.printStackTrace();
 		} catch (TransformerException e1) {
@@ -96,16 +120,31 @@ public class FileServer {
 		}
 	}
 	
+	public void saveCache(Document doc){
+		File cache = new File("save/cache.bin");
+		if(!cache.exists()){
+			File folder = new File("save");
+			folder.mkdirs();
+		}
+		writeXML(doc, cache);
+		System.out.println("Cache: File saved!");
+	}
+	
 	public void openFile (File file) {
 		System.out.println("open xml file method");
 		docEntries = new ArrayList<Entry>();
-		currentFile = file;
 		try {
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder;
 			dBuilder = dbFactory.newDocumentBuilder();
 			Document doc = dBuilder.parse(file);
 			doc.getDocumentElement().normalize();
+			System.out.println("Node List Attribute: ");
+			Element root = (Element) doc.getElementsByTagName("list").item(0);
+			String filepath = root.getAttribute("path");
+			currentFile = new File(filepath);
+			listName = getFileName(currentFile);
+			System.out.println(listName);
 			NodeList nList = doc.getElementsByTagName("entry");
 			for (int temp = 0; temp < nList.getLength(); temp++) {
 				Node nNode = nList.item(temp);
@@ -121,6 +160,10 @@ public class FileServer {
 		} catch (ParserConfigurationException | SAXException | IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public String getListName(){
+		return listName;
 	}
 	
 	public ArrayList<Entry> getDocEntries(){

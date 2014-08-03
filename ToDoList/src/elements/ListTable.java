@@ -94,6 +94,7 @@ public class ListTable extends AbstractTableModel {
 			Entry e = getEintragAt(rowIndex);
 			e.setErledigt((boolean) aValue);
 			fireTableRowsUpdated(rowIndex, rowIndex);
+			modified = true;
 		}
 	}
 

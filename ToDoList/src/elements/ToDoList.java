@@ -177,14 +177,8 @@ public class ToDoList extends JFrame {
 		File cacheFile = new File("save/cache.bin");
 		System.out.println(cacheFile.getAbsolutePath());
 		if(cacheFile.exists()){
-			String filename = "";
-			int i = cacheFile.getName().lastIndexOf('.');
-	    	if (i > 0) {
-	    	    filename = cacheFile.getName().substring(0, i);
-	    	}
-	    	//woher listenname????
 			fs.openFile(cacheFile);
-    		setFileTitle(filename);
+    		setFileTitle(fs.getListName());
     		lt.fillTable(fs.getDocEntries());
 		}
 		else{
@@ -327,15 +321,8 @@ public class ToDoList extends JFrame {
 	    if(returnVal == 0){
 	    	File f = fc.getSelectedFile();
 	    	System.out.println("You chose to open this file: " + f.getName());
-	    	String ext = "";
-	    	String filename = "";
-	    	int i = f.getName().lastIndexOf('.');
-	    	if (i > 0) {
-	    	    ext = f.getName().substring(i+1);
-	    	    filename = f.getName().substring(0, i);
-	    	}
-	    	System.out.println("File-Extension: "+ext);
-	    	System.out.println("File-Name: "+filename);
+	    	String filename = fs.getFileName(f);
+	    	String ext = fs.getFileExtension(f);
 	    	if(ext.equals("todo")){
 	    		if(f.exists()){
 		    		fs.openFile(f);
