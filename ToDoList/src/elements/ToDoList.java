@@ -84,15 +84,13 @@ public class ToDoList extends JFrame {
 		// auf Fenster setzen
 		add(scroll, BorderLayout.CENTER);
 		add(pane, BorderLayout.EAST);
-		setVisible(true);
-		
-		init();
 
 		// ActionListener for Buttons
 		add.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				EntryPopup popup = new EntryPopup(tablelist, true);
+				popup.showPopup();
 			}
 		});
 
@@ -110,6 +108,7 @@ public class ToDoList extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				if (tablelist.getSelectedRow() > -1) {
 					EntryPopup popup = new EntryPopup(tablelist, false);
+					popup.showPopup();
 				}
 			}
 		});
@@ -152,7 +151,7 @@ public class ToDoList extends JFrame {
 		save.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				//saveAs();
+				saveAuto();
 			}
 		});
 		
@@ -179,6 +178,11 @@ public class ToDoList extends JFrame {
 		});
 	}
 	
+	public void start(){
+		setVisible(true);
+		init();
+	}
+	
 	public void init(){
 		//initialize todolist at the beginning
 		File cacheFile = new File("save/cache.bin");
@@ -190,6 +194,7 @@ public class ToDoList extends JFrame {
 		}
 		else{
 			WelcomePopup wp = new WelcomePopup(this);
+			wp.showPopup();
 			if(!isInitialized){
 				setFileTitle("New List");
 				lt.setModified(true);

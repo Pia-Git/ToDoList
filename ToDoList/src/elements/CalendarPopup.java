@@ -78,6 +78,9 @@ public class CalendarPopup extends JDialog {
 		JPanel pane = new JPanel();
 		pane.add(calendar);
 		setContentPane(calendar);
+	}
+	
+	public void showPopup(){
 		setVisible(true);
 	}
 

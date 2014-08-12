@@ -39,6 +39,7 @@ public class EntryPopup {
 	DateFormat dateFormat;
 	JTable table;
 	ListTable listTable;
+	JPanel pane;
 	boolean isTime = true;
 	boolean newEintrag = true;
 
@@ -72,6 +73,8 @@ public class EntryPopup {
 		endTime.add(checkTime);
 		myPanel.add(task);
 		myPanel.add(endTime);
+		
+		pane = myPanel;
 
 		// listeners
 
@@ -80,6 +83,7 @@ public class EntryPopup {
 			public void mouseClicked(MouseEvent e) {
 				if(isTime){
 					CalendarPopup popup = new CalendarPopup(dateField);
+					popup.showPopup();
 				}
 			}
 		});
@@ -101,15 +105,16 @@ public class EntryPopup {
 				}
 			}
 		});
-
-		// wenn auf OK geklickt
+	}
+	
+	public void showPopup(){
 		String title = "";
 		if(this.newEintrag)
 			title = "Create Entry";
 		else
 			title = "Edit Entry";
 
-		int result = JOptionPane.showConfirmDialog(null, myPanel,
+		int result = JOptionPane.showConfirmDialog(null, pane,
 				title, JOptionPane.OK_CANCEL_OPTION,
 				JOptionPane.PLAIN_MESSAGE);
 
