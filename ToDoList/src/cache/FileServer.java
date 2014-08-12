@@ -48,6 +48,10 @@ public class FileServer {
 		return currentFile;
 	}
 	
+	public void setCurrentFile(File f){
+		currentFile = f;
+	}
+	
 	public String getFileName(File f){
 		String filename = "";
 		int i = f.getName().lastIndexOf('.');

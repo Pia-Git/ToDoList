@@ -1,6 +1,5 @@
 package elements;
 
-import java.io.File;
 import java.util.ArrayList;
 
 import javax.swing.table.AbstractTableModel;

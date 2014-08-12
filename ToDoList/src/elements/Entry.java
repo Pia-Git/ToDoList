@@ -8,7 +8,7 @@ import java.util.Date;
 /**
  * Die Klasse Eintrag represaentiert einen Listeneintrag, welches die
  * Aufgabenbeschreibung (String) und den Endzeitpunkt der Aufgabe (Date inkl.
- * Zeitangabe) beinhaltet.
+ * Zeitangabe) sowie den Erledigt-Status beinhaltet.
  * 
  * @author Pia
  * 

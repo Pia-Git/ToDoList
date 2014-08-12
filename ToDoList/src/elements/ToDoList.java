@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -20,7 +19,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import cache.FileServer;
@@ -28,7 +26,7 @@ import cache.FileServer;
 /**
  * Die Klasse ToDoListe represaentiert die GUI, die die Liste als JTable
  * anzeigt. Per Button kann der Anwender neue Listeneintraege erstellen, bereits
- * vorhandene Eintraege bearbeiten, loeschen, abspeichern oder die gesamte Liste
+ * vorhandene Eintraege bearbeiten oder oeffnen, loeschen, abspeichern oder die gesamte Liste
  * als Website anzeigen lassen.
  * 
  * 
@@ -61,15 +59,16 @@ public class ToDoList extends JFrame {
 
 		// Button Panel
 		JPanel pane = new JPanel();
-		pane.setLayout(new GridLayout(9, 1));
-		JButton add = new JButton("+");
-		JButton delete = new JButton("-");
-		JButton edit = new JButton("edit");
-		JButton deleteAll = new JButton("- (all)");
+		pane.setLayout(new GridLayout(10, 1));
+		JButton add = new JButton("add Entry");
+		JButton delete = new JButton("delete Entry");
+		JButton edit = new JButton("edit Entry");
+		JButton deleteAll = new JButton("delete all");
 		JButton actual = new JButton("update");
-		JButton open = new JButton("open");
+		JButton open = new JButton("open List");
+		JButton saveAs = new JButton("save as");
 		JButton save = new JButton("save");
-		JButton newly = new JButton("new");
+		JButton newly = new JButton("new List");
 		JButton website = new JButton("web");
 		pane.add(add);
 		pane.add(delete);
@@ -77,6 +76,7 @@ public class ToDoList extends JFrame {
 		pane.add(deleteAll);
 		pane.add(actual);
 		pane.add(open);
+		pane.add(saveAs);
 		pane.add(save);
 		pane.add(newly);
 		pane.add(website);
@@ -119,7 +119,7 @@ public class ToDoList extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				if (!lt.isEmpty()) {
 					int result = JOptionPane.showConfirmDialog(null,
-							"Do you want really delete complete list?",
+							"Do you really want to delete complete list?",
 							"Delete all", JOptionPane.YES_NO_OPTION,
 							JOptionPane.PLAIN_MESSAGE);
 					if (result == 0)
@@ -141,11 +141,18 @@ public class ToDoList extends JFrame {
 				open();
 			}
 		});
+		
+		saveAs.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				saveAs();
+			}
+		});
 
 		save.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				save();
+				//saveAs();
 			}
 		});
 		
@@ -202,15 +209,16 @@ public class ToDoList extends JFrame {
 				JOptionPane.PLAIN_MESSAGE);
 		if (result == JOptionPane.OK_OPTION){
 			if(!tf.getText().equals("")){
-				//datei vorher abspeichern??? (vorige liste)
+				saveAuto();
 				lt.clearTable(); 
 			    setFileTitle(tf.getText());
+			    fs.setCurrentFile(null);
 			    isInitialized = true;
 			}
 		}
 	}
 	
-	public void save(){
+	public void saveAs(){
 		JFileChooser fc = new JFileChooser();
 	    FileNameExtensionFilter filter = new FileNameExtensionFilter(
 	            "ToDoLists", "todo");
@@ -230,17 +238,19 @@ public class ToDoList extends JFrame {
 	    		          "Overwrite file", JOptionPane.YES_NO_OPTION,
 	    		          JOptionPane.WARNING_MESSAGE);
 	    		if (response == JOptionPane.YES_OPTION){
-	    			fs.saveFile(lt.getTodolist(), newF);
-	    			setFileTitle(f.getName());
-	    			lt.setModified(false);
+	    			save(newF);
 	    		}
 	    	}
 	    	else{
-	    		fs.saveFile(lt.getTodolist(), newF);
-	    		setFileTitle(f.getName());
-	    		lt.setModified(false);
+	    		save(newF);
 	    	}
 	    }
+	}
+	
+	public void save(File f){
+		fs.saveFile(lt.getTodolist(), f);
+		setFileTitle(f.getName());
+		lt.setModified(false);
 	}
 	
 	public void saveAuto(){
@@ -249,67 +259,26 @@ public class ToDoList extends JFrame {
 			if(f != null && f.exists()){
 				int response = JOptionPane.showConfirmDialog(this,
 				          "The file " + f.getName() + 
-				          " is modified. Do you want save changes?",
+				          " is modified. Do you want to save the changes?",
 				          "Modified file", JOptionPane.YES_NO_OPTION,
 				          JOptionPane.WARNING_MESSAGE);
 			  		if (response == JOptionPane.YES_OPTION){
 			  			System.out.println("Automatic: Save this file: " + f.getAbsolutePath());
-			  			save();
+			  			save(f);
 			  		}
 	    	}
 	    	else{
     			int response = JOptionPane.showConfirmDialog(this,
-				          "The file doesn't exist. Do you want save the new file?",
+				          "The file doesn't exist. Do you want to save the new file?",
 				          "New file", JOptionPane.YES_NO_OPTION,
 				          JOptionPane.WARNING_MESSAGE);
 			  		if (response == JOptionPane.YES_OPTION){
 			  			System.out.println("Automatic: Save the new file!");
-			  			save();
+			  			saveAs();
 			  		}
 	    	}
 		}
 	}
-	
-	/*public void save(Boolean auto){
-		if(lt.getModified()){
-			File f = fs.getCurrentFile();
-			if(f != null && f.exists()){
-				if(auto){
-					int response = JOptionPane.showConfirmDialog(this,
-					          "The file " + f.getName() + 
-					          " is modified. Do you want save changes?",
-					          "Modified file", JOptionPane.YES_NO_OPTION,
-					          JOptionPane.WARNING_MESSAGE);
-				  		if (response == JOptionPane.YES_OPTION){
-				  			System.out.println("Automatic: Save this file: " + f.getAbsolutePath());
-				  			fs.saveFile(lt.getTodolist(), f, false);
-				  			lt.setModified(false);
-				  		}
-				}
-				else{
-					System.out.println("Save this file: " + f.getAbsolutePath());
-		  			fs.saveFile(lt.getTodolist(), f, false);
-		  			lt.setModified(false);
-				}
-	    	}
-	    	else{
-	    		if(auto){
-	    			int response = JOptionPane.showConfirmDialog(this,
-					          "The file doesn't exist. Do you want save the new file?",
-					          "New file", JOptionPane.YES_NO_OPTION,
-					          JOptionPane.WARNING_MESSAGE);
-				  		if (response == JOptionPane.YES_OPTION){
-				  			System.out.println("Automatic: Save the new file!");
-				  			saveWithChooser();
-				  		}
-	    		}
-	    		else{
-	    			System.out.println("Save the new file!");
-		  			saveWithChooser();
-	    		}
-	    	}
-		}
-	}*/
 	
 	public void open(){
 		JFileChooser fc = new JFileChooser();
@@ -319,6 +288,7 @@ public class ToDoList extends JFrame {
 	    int returnVal = fc.showOpenDialog(self);
 	    //wenn "oeffnen"
 	    if(returnVal == 0){
+	    	saveAuto();
 	    	File f = fc.getSelectedFile();
 	    	System.out.println("You chose to open this file: " + f.getName());
 	    	String filename = fs.getFileName(f);

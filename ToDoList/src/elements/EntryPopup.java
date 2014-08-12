@@ -103,9 +103,14 @@ public class EntryPopup {
 		});
 
 		// wenn auf OK geklickt
+		String title = "";
+		if(this.newEintrag)
+			title = "Create Entry";
+		else
+			title = "Edit Entry";
 
 		int result = JOptionPane.showConfirmDialog(null, myPanel,
-				"Create ToDo", JOptionPane.OK_CANCEL_OPTION,
+				title, JOptionPane.OK_CANCEL_OPTION,
 				JOptionPane.PLAIN_MESSAGE);
 
 		if (result == JOptionPane.OK_OPTION) {
