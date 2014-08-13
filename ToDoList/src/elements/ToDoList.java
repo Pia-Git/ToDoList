@@ -4,8 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -53,7 +51,7 @@ public class ToDoList extends JFrame {
 		centerWindow();
 		setLayout(new BorderLayout());
 
-		lt = new ListTable();
+		lt = new ListTable(this);
 		tablelist = new JTable(lt);
 		JScrollPane scroll = new JScrollPane(tablelist);
 
@@ -86,94 +84,64 @@ public class ToDoList extends JFrame {
 		add(pane, BorderLayout.EAST);
 
 		// ActionListener for Buttons
-		add.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				EntryPopup popup = new EntryPopup(tablelist, true);
+		add.addActionListener(arg0 -> {
+			EntryPopup popup = new EntryPopup(tablelist, true);
+			popup.showPopup();
+		});
+
+		delete.addActionListener(arg0 -> {
+			if (tablelist.getSelectedRow() > -1) {
+				lt.removeRow(tablelist.getSelectedRow());
+			}
+		});
+
+		edit.addActionListener(arg0 -> {
+			if (tablelist.getSelectedRow() > -1) {
+				EntryPopup popup = new EntryPopup(tablelist, false);
 				popup.showPopup();
 			}
 		});
 
-		delete.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				if (tablelist.getSelectedRow() > -1) {
-					lt.removeRow(tablelist.getSelectedRow());
-				}
+		deleteAll.addActionListener(arg0 -> {
+			if (!lt.isEmpty()) {
+				int result = JOptionPane.showConfirmDialog(null,
+						"Do you really want to delete complete list?",
+						"Delete all", JOptionPane.YES_NO_OPTION,
+						JOptionPane.PLAIN_MESSAGE);
+				if (result == 0)
+					lt.clearTable(); // tabelle leeren
 			}
 		});
 
-		edit.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				if (tablelist.getSelectedRow() > -1) {
-					EntryPopup popup = new EntryPopup(tablelist, false);
-					popup.showPopup();
-				}
-			}
-		});
-
-		deleteAll.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				if (!lt.isEmpty()) {
-					int result = JOptionPane.showConfirmDialog(null,
-							"Do you really want to delete complete list?",
-							"Delete all", JOptionPane.YES_NO_OPTION,
-							JOptionPane.PLAIN_MESSAGE);
-					if (result == 0)
-						lt.clearTable(); // tabelle leeren
-				}
-			}
-		});
-
-		actual.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				lt.fireTableDataChanged();
-			}
+		actual.addActionListener(arg0 -> {
+			lt.fireTableDataChanged();
 		});
 		
-		open.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				open();
-			}
+		open.addActionListener(arg0 -> {
+			open();
 		});
 		
-		saveAs.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				saveAs();
-			}
+		saveAs.addActionListener(arg0 -> {
+			saveAs();
 		});
 
-		save.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				saveAuto();
-			}
+		save.addActionListener(arg0 -> {
+			saveAuto();
 		});
 		
-		newly.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				newFile();
-			}
+		newly.addActionListener(arg0 -> {
+			newFile();
 		});
 
-		website.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-
-			}
+		website.addActionListener(arg0 -> {
+			//todo
 		});
 
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent we) {
 				saveAuto();
-				System.exit(0);
+				ToDoList.this.dispose();
 			}
 		});
 	}
@@ -198,6 +166,7 @@ public class ToDoList extends JFrame {
 			if(!isInitialized){
 				setFileTitle("New List");
 				lt.setModified(true);
+				setFileModified();
 			}
 		}
 	}
@@ -254,7 +223,7 @@ public class ToDoList extends JFrame {
 	
 	public void save(File f){
 		fs.saveFile(lt.getTodolist(), f);
-		setFileTitle(f.getName());
+		setFileTitle(fs.getFileName(f));
 		lt.setModified(false);
 	}
 	
@@ -317,6 +286,10 @@ public class ToDoList extends JFrame {
 	public void setFileTitle(String t){
 		setTitle(t+" - ToDoList");
 		fileTitle = t;
+	}
+	
+	public void setFileModified(){
+		setTitle(fileTitle+"* - ToDoList");
 	}
 
 	public void centerWindow() {

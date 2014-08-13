@@ -9,8 +9,10 @@ public class ListTable extends AbstractTableModel {
 	private static final long serialVersionUID = 1L;
 	private ArrayList<Entry> todolist;
 	private Boolean modified = false;
+	private ToDoList td;
 
-	public ListTable() {
+	public ListTable(ToDoList td) {
+		this.td = td;
 		todolist = new ArrayList<Entry>();
 	}
 	
@@ -35,7 +37,7 @@ public class ListTable extends AbstractTableModel {
 		for (int i = this.getRowCount() - 1; i >= 0; i--) {
 			removeRow(i);
 		}
-		modified = true;
+		setModifiedTrue();
 	}
 
 	public boolean isEmpty() {
@@ -45,7 +47,7 @@ public class ListTable extends AbstractTableModel {
 	public void removeRow(int row) {
 		fireTableRowsDeleted(row, row + 1);
 		todolist.remove(row);
-		modified = true;
+		setModifiedTrue();
 	}
 
 	@Override
@@ -93,7 +95,7 @@ public class ListTable extends AbstractTableModel {
 			Entry e = getEintragAt(rowIndex);
 			e.setErledigt((boolean) aValue);
 			fireTableRowsUpdated(rowIndex, rowIndex);
-			modified = true;
+			setModifiedTrue();
 		}
 	}
 
@@ -122,17 +124,22 @@ public class ListTable extends AbstractTableModel {
 		// Event an Listener abschicken, Eintrag wird am Ende der Liste
 		// angefuegt
 		fireTableRowsInserted(todolist.size(), todolist.size());
-		modified = true;
+		setModifiedTrue();
 	}
 
 	public void editEntry(int row, Entry e) {
 		todolist.set(row, e);
 		fireTableRowsUpdated(row, row);
-		modified = true;
+		setModifiedTrue();
 	}
 
 	public ArrayList<Entry> getTodolist() {
 		return todolist;
+	}
+	
+	public void setModifiedTrue(){
+		modified = true;
+		td.setFileModified();
 	}
 
 	@Override
