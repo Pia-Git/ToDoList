@@ -58,10 +58,13 @@ public class EntryPopup {
 		this.fillProperties();
 
 		JPanel myPanel = new JPanel();
-		myPanel.setLayout(new GridLayout(2, 1));
+		myPanel.setLayout(new GridLayout(3, 1));
 		JPanel task = new JPanel();
 		task.add(new JLabel("ToDo:"));
 		task.add(stringField);
+		JPanel timeOnOff = new JPanel();
+		timeOnOff.add(new JLabel("Time On/Off"));
+		timeOnOff.add(checkTime);
 		JPanel endTime = new JPanel();
 		endTime.add(new JLabel("Finish date:"));
 		endTime.add(dateField);
@@ -70,8 +73,8 @@ public class EntryPopup {
 		endTime.add(new JLabel("h"));
 		endTime.add(minuteField);
 		endTime.add(new JLabel("m"));
-		endTime.add(checkTime);
 		myPanel.add(task);
+		myPanel.add(timeOnOff);
 		myPanel.add(endTime);
 		
 		pane = myPanel;

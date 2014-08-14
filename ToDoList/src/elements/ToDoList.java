@@ -8,15 +8,17 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 
-import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.Timer;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import cache.FileServer;
@@ -40,6 +42,10 @@ public class ToDoList extends JFrame {
 	FileServer fs;
 	Boolean isInitialized = false;
 	String fileTitle;
+	JMenuBar bar;
+	FileMenu fileMenu;
+	EntryMenu editMenu;
+	Timer timer;
 
 	private static final long serialVersionUID = 1L;
 
@@ -53,94 +59,20 @@ public class ToDoList extends JFrame {
 
 		lt = new ListTable(this);
 		tablelist = new JTable(lt);
+		tablelist.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		bar = new JMenuBar();
+		fileMenu = new FileMenu("File", this);
+		editMenu = new EntryMenu("Edit", this);
+		bar.add(fileMenu);
+		bar.add(editMenu);
+		setJMenuBar(bar);
 		JScrollPane scroll = new JScrollPane(tablelist);
-
-		// Button Panel
-		JPanel pane = new JPanel();
-		pane.setLayout(new GridLayout(10, 1));
-		JButton add = new JButton("add Entry");
-		JButton delete = new JButton("delete Entry");
-		JButton edit = new JButton("edit Entry");
-		JButton deleteAll = new JButton("delete all");
-		JButton actual = new JButton("update");
-		JButton open = new JButton("open List");
-		JButton saveAs = new JButton("save as");
-		JButton save = new JButton("save");
-		JButton newly = new JButton("new List");
-		JButton website = new JButton("web");
-		pane.add(add);
-		pane.add(delete);
-		pane.add(edit);
-		pane.add(deleteAll);
-		pane.add(actual);
-		pane.add(open);
-		pane.add(saveAs);
-		pane.add(save);
-		pane.add(newly);
-		pane.add(website);
-
-		// auf Fenster setzen
 		add(scroll, BorderLayout.CENTER);
-		add(pane, BorderLayout.EAST);
-
-		// ActionListener for Buttons
-		add.addActionListener(arg0 -> {
-			EntryPopup popup = new EntryPopup(tablelist, true);
-			popup.showPopup();
-		});
-
-		delete.addActionListener(arg0 -> {
-			if (tablelist.getSelectedRow() > -1) {
-				lt.removeRow(tablelist.getSelectedRow());
-			}
-		});
-
-		edit.addActionListener(arg0 -> {
-			if (tablelist.getSelectedRow() > -1) {
-				EntryPopup popup = new EntryPopup(tablelist, false);
-				popup.showPopup();
-			}
-		});
-
-		deleteAll.addActionListener(arg0 -> {
-			if (!lt.isEmpty()) {
-				int result = JOptionPane.showConfirmDialog(null,
-						"Do you really want to delete complete list?",
-						"Delete all", JOptionPane.YES_NO_OPTION,
-						JOptionPane.PLAIN_MESSAGE);
-				if (result == 0)
-					lt.clearTable(); // tabelle leeren
-			}
-		});
-
-		actual.addActionListener(arg0 -> {
-			lt.fireTableDataChanged();
-		});
-		
-		open.addActionListener(arg0 -> {
-			open();
-		});
-		
-		saveAs.addActionListener(arg0 -> {
-			saveAs();
-		});
-
-		save.addActionListener(arg0 -> {
-			saveAuto();
-		});
-		
-		newly.addActionListener(arg0 -> {
-			newFile();
-		});
-
-		website.addActionListener(arg0 -> {
-			//todo
-		});
 
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent we) {
-				saveAuto();
+				saveAuto(false);
 				ToDoList.this.dispose();
 			}
 		});
@@ -149,6 +81,31 @@ public class ToDoList extends JFrame {
 	public void start(){
 		setVisible(true);
 		init();
+		startTimer();
+	}
+	
+	public void startTimer(){
+		timer = new Timer(60000, arg0 -> {
+			lt.fireTableDataChanged();
+		});
+		timer.start();
+	}
+	
+	public void delete(){
+		if (tablelist.getSelectedRow() > -1) {
+			lt.removeRow(tablelist.getSelectedRow());
+		}
+	}
+	
+	public void deleteAll(){
+		if (!lt.isEmpty()) {
+			int result = JOptionPane.showConfirmDialog(null,
+					"Do you really want to delete complete list?",
+					"Delete all", JOptionPane.YES_NO_OPTION,
+					JOptionPane.PLAIN_MESSAGE);
+			if (result == 0)
+				lt.clearTable(); // tabelle leeren
+		}
 	}
 	
 	public void init(){
@@ -183,7 +140,7 @@ public class ToDoList extends JFrame {
 				JOptionPane.PLAIN_MESSAGE);
 		if (result == JOptionPane.OK_OPTION){
 			if(!tf.getText().equals("")){
-				saveAuto();
+				saveAuto(false);
 				lt.clearTable(); 
 			    setFileTitle(tf.getText());
 			    fs.setCurrentFile(null);
@@ -227,19 +184,24 @@ public class ToDoList extends JFrame {
 		lt.setModified(false);
 	}
 	
-	public void saveAuto(){
+	public void saveAuto(Boolean yes){
 		if(lt.getModified()){
 			File f = fs.getCurrentFile();
 			if(f != null && f.exists()){
-				int response = JOptionPane.showConfirmDialog(this,
-				          "The file " + f.getName() + 
-				          " is modified. Do you want to save the changes?",
-				          "Modified file", JOptionPane.YES_NO_OPTION,
-				          JOptionPane.WARNING_MESSAGE);
-			  		if (response == JOptionPane.YES_OPTION){
-			  			System.out.println("Automatic: Save this file: " + f.getAbsolutePath());
-			  			save(f);
-			  		}
+				if(yes){
+					System.out.println("Save this file: " + f.getAbsolutePath());
+		  			save(f);
+				}else{
+					int response = JOptionPane.showConfirmDialog(this,
+					          "The file " + f.getName() + 
+					          " is modified. Do you want to save the changes?",
+					          "Modified file", JOptionPane.YES_NO_OPTION,
+					          JOptionPane.WARNING_MESSAGE);
+				  		if (response == JOptionPane.YES_OPTION){
+				  			System.out.println("Automatic: Save this file: " + f.getAbsolutePath());
+				  			save(f);
+				  		}
+				}
 	    	}
 	    	else{
     			int response = JOptionPane.showConfirmDialog(this,
@@ -262,7 +224,7 @@ public class ToDoList extends JFrame {
 	    int returnVal = fc.showOpenDialog(self);
 	    //wenn "oeffnen"
 	    if(returnVal == 0){
-	    	saveAuto();
+	    	saveAuto(false);
 	    	File f = fc.getSelectedFile();
 	    	System.out.println("You chose to open this file: " + f.getName());
 	    	String filename = fs.getFileName(f);
@@ -290,6 +252,10 @@ public class ToDoList extends JFrame {
 	
 	public void setFileModified(){
 		setTitle(fileTitle+"* - ToDoList");
+	}
+	
+	public JTable getTablelist(){
+		return tablelist;
 	}
 
 	public void centerWindow() {
