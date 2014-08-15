@@ -3,7 +3,10 @@ package elements;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -46,6 +49,7 @@ public class ToDoList extends JFrame {
 	FileMenu fileMenu;
 	EntryMenu editMenu;
 	Timer timer;
+	int selectedRow = -1;
 
 	private static final long serialVersionUID = 1L;
 
@@ -60,6 +64,42 @@ public class ToDoList extends JFrame {
 		lt = new ListTable(this);
 		tablelist = new JTable(lt);
 		tablelist.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		tablelist.getColumnModel().getColumn(2).setCellRenderer(new CellRenderer());
+		tablelist.addMouseListener(new MouseListener(){
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				//if right-click
+				if(e.getButton() == MouseEvent.BUTTON3){
+					//select row
+					Point p = e.getPoint();
+					int rowNumber = tablelist.rowAtPoint(p);
+					tablelist.getSelectionModel().setSelectionInterval(rowNumber, rowNumber);
+					ContextMenu contextMenu = new ContextMenu(self,e);
+					contextMenu.show();
+				}
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				// TODO Auto-generated method stub
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				// TODO Auto-generated method stub
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+			}
+		});
 		bar = new JMenuBar();
 		fileMenu = new FileMenu("File", this);
 		editMenu = new EntryMenu("Edit", this);
@@ -72,8 +112,7 @@ public class ToDoList extends JFrame {
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent we) {
-				saveAuto(false);
-				ToDoList.this.dispose();
+				close();
 			}
 		});
 	}
@@ -84,11 +123,32 @@ public class ToDoList extends JFrame {
 		startTimer();
 	}
 	
+	public void close(){
+		saveAuto(false);
+		ToDoList.this.dispose();
+	}
+	
 	public void startTimer(){
 		timer = new Timer(60000, arg0 -> {
+			selectedRow = tablelist.getSelectedRow();
 			lt.fireTableDataChanged();
+			if(!(selectedRow == -1)){
+				tablelist.setRowSelectionInterval(selectedRow, selectedRow);
+			}
 		});
 		timer.start();
+	}
+	
+	public void showEntryPopup(Boolean add){
+		if(add){
+			EntryPopup popup = new EntryPopup(tablelist, true);
+			popup.showPopup();
+		}else{
+			if (tablelist.getSelectedRow() > -1) {
+				EntryPopup popup = new EntryPopup(tablelist, false);
+				popup.showPopup();
+			}
+		}
 	}
 	
 	public void delete(){
@@ -216,6 +276,17 @@ public class ToDoList extends JFrame {
 		}
 	}
 	
+	public void openAbout(){
+		JPanel pane = new JPanel();
+		pane.setLayout(new GridLayout(2,1));
+		JLabel version = new JLabel("ToDoList v1.0");
+		JLabel author = new JLabel("Author: Pia Sinzig");
+		pane.add(version);
+		pane.add(author);
+		JOptionPane.showMessageDialog(this, pane, "About ToDoList",
+		          JOptionPane.PLAIN_MESSAGE);
+	}
+	
 	public void open(){
 		JFileChooser fc = new JFileChooser();
 	    FileNameExtensionFilter filter = new FileNameExtensionFilter(
@@ -252,10 +323,6 @@ public class ToDoList extends JFrame {
 	
 	public void setFileModified(){
 		setTitle(fileTitle+"* - ToDoList");
-	}
-	
-	public JTable getTablelist(){
-		return tablelist;
 	}
 
 	public void centerWindow() {

@@ -10,6 +10,8 @@ public class FileMenu extends JMenu{
 	JMenuItem open;
 	JMenuItem save;
 	JMenuItem saveAs;
+	JMenuItem about;
+	JMenuItem exit;
 	ToDoList frame;
 	
 	public FileMenu(String title, ToDoList frame){
@@ -19,6 +21,8 @@ public class FileMenu extends JMenu{
 		open = new JMenuItem("Open...");
 		save = new JMenuItem("Save");
 		saveAs = new JMenuItem("Save as...");
+		about = new JMenuItem("About ToDoList");
+		exit = new JMenuItem("Exit");
 		
 		neu.addActionListener(arg0 -> {
 			frame.newFile();
@@ -32,10 +36,18 @@ public class FileMenu extends JMenu{
 		saveAs.addActionListener(arg0 -> {
 			frame.saveAs();
 		});
+		about.addActionListener(arg0 -> {
+			frame.openAbout();
+		});
+		exit.addActionListener(arg0 -> {
+			frame.close();
+		});
 		
 		add(neu);
 		add(open);
 		add(save);
 		add(saveAs);
+		add(about);
+		add(exit);
 	}
 }

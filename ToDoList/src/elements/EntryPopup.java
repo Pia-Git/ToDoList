@@ -1,5 +1,6 @@
 package elements;
 
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -49,7 +50,9 @@ public class EntryPopup {
 		stringField = new JTextField(20);
 		dateField = new JTextField(10);
 		hourField = new JSpinField(0,23);
+		hourField.setPreferredSize(new Dimension(39,26));
 		minuteField = new JSpinField(0,59);
+		minuteField.setPreferredSize(new Dimension(39,26));
 		checkTime = new JCheckBox();
 		dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 		table = tab;

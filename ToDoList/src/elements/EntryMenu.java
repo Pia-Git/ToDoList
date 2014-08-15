@@ -2,7 +2,6 @@ package elements;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JTable;
 
 public class EntryMenu extends JMenu{
 
@@ -22,17 +21,12 @@ public class EntryMenu extends JMenu{
 		edit = new JMenuItem("Edit");
 		delete = new JMenuItem("Delete");
 		deleteAll = new JMenuItem("Delete all");
-		JTable table = frame.getTablelist();
 		
 		add.addActionListener(arg0 -> {
-			EntryPopup popup = new EntryPopup(table, true);
-			popup.showPopup();
+			frame.showEntryPopup(true);
 		});
 		edit.addActionListener(arg0 -> {
-			if (table.getSelectedRow() > -1) {
-				EntryPopup popup = new EntryPopup(table, false);
-				popup.showPopup();
-			}
+			frame.showEntryPopup(false);
 		});
 		delete.addActionListener(arg0 -> {
 			frame.delete();
