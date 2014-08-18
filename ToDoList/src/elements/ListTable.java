@@ -45,7 +45,7 @@ public class ListTable extends AbstractTableModel {
 	}
 
 	public void removeRow(int row) {
-		fireTableRowsDeleted(row, row + 1);
+		fireTableRowsDeleted(row, row);
 		todolist.remove(row);
 		setModifiedTrue();
 	}
@@ -115,7 +115,7 @@ public class ListTable extends AbstractTableModel {
 	
 	public void fillTableWithEntry(Entry e){
 		todolist.add(e);
-		fireTableRowsInserted(todolist.size(), todolist.size());
+		fireTableRowsInserted(todolist.size()-1, todolist.size()-1);
 	}
 	
 	public void addEntry(Entry e) {
@@ -123,7 +123,7 @@ public class ListTable extends AbstractTableModel {
 		todolist.add(e);
 		// Event an Listener abschicken, Eintrag wird am Ende der Liste
 		// angefuegt
-		fireTableRowsInserted(todolist.size(), todolist.size());
+		fireTableRowsInserted(todolist.size()-1, todolist.size()-1);
 		setModifiedTrue();
 	}
 

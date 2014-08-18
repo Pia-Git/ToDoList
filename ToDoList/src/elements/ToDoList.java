@@ -23,6 +23,7 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.Timer;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.TableRowSorter;
 
 import cache.FileServer;
 
@@ -63,6 +64,7 @@ public class ToDoList extends JFrame {
 
 		lt = new ListTable(this);
 		tablelist = new JTable(lt);
+		tablelist.setRowSorter(new TableRowSorter<ListTable>(lt));
 		tablelist.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		tablelist.getColumnModel().getColumn(2).setCellRenderer(new CellRenderer());
 		tablelist.addMouseListener(new MouseListener(){
@@ -129,7 +131,7 @@ public class ToDoList extends JFrame {
 	}
 	
 	public void startTimer(){
-		timer = new Timer(60000, arg0 -> {
+		timer = new Timer(/*60000*/ 1000, arg0 -> {
 			selectedRow = tablelist.getSelectedRow();
 			lt.fireTableDataChanged();
 			if(!(selectedRow == -1)){
@@ -153,7 +155,8 @@ public class ToDoList extends JFrame {
 	
 	public void delete(){
 		if (tablelist.getSelectedRow() > -1) {
-			lt.removeRow(tablelist.getSelectedRow());
+			int selectRow = tablelist.convertRowIndexToView(tablelist.getSelectedRow());
+			lt.removeRow(selectRow);
 		}
 	}
 	

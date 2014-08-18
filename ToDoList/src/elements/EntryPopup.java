@@ -43,6 +43,7 @@ public class EntryPopup {
 	JPanel pane;
 	boolean isTime = true;
 	boolean newEintrag = true;
+	int selectedRow = -1;
 
 	public EntryPopup(JTable tab, boolean neu) {
 
@@ -154,15 +155,13 @@ public class EntryPopup {
 				}
 				// ansonsten Eintrag veraendern
 				else {
-					// todo
-					Entry editE = listTable.getEintragAt(table
-							.getSelectedRow());
+					Entry editE = listTable.getEintragAt(selectedRow);
 					editE.setAufgabe(this.stringField.getText());
 					editE.setEndzeitpunkt(d);
 					if(d != null){
 						editE.berechneRestzeit(d);
 					}
-					listTable.editEntry(table.getSelectedRow(), editE);
+					listTable.editEntry(selectedRow, editE);
 				}
 			}
 		}
@@ -177,7 +176,8 @@ public class EntryPopup {
 			this.minuteField.setValue(59);
 			this.checkTime.setSelected(true);
 		} else {
-			Entry editE = listTable.getEintragAt(table.getSelectedRow());
+			selectedRow = table.convertRowIndexToView(table.getSelectedRow());
+			Entry editE = listTable.getEintragAt(selectedRow);
 			this.stringField.setText(editE.getAufgabe());
 			this.dateField.setText(this.dateFormat.format(editE.getEnddate()));
 			this.hourField.setValue(editE.getHour());
