@@ -3,6 +3,7 @@ package elements;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
@@ -11,6 +12,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -61,6 +63,8 @@ public class ToDoList extends JFrame {
 		setSize(700, 400);
 		centerWindow();
 		setLayout(new BorderLayout());
+		ImageIcon icon = new ImageIcon(ClassLoader.getSystemResource("image/logo.png"));
+		setIconImage(icon.getImage());
 
 		lt = new ListTable(this);
 		tablelist = new JTable(lt);
