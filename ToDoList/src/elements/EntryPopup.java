@@ -44,6 +44,8 @@ public class EntryPopup {
 	boolean isTime = true;
 	boolean newEintrag = true;
 	int selectedRow = -1;
+	int minute;
+	int hour;
 
 	public EntryPopup(JTable tab, boolean neu) {
 
@@ -166,30 +168,44 @@ public class EntryPopup {
 			}
 		}
 	}
+	
+	public void getCurrentTime() {
+		Date date = new Date();
+		DateFormat timeFormat = new SimpleDateFormat("HH:mm");
+		String time = timeFormat.format(date);
+		String[] timeArray = time.split(":");
+		hour = Integer.parseInt(timeArray[0]);
+		minute = Integer.parseInt(timeArray[1]);
+	}
 
 	public void fillProperties() {
 		if (this.newEintrag) {
 			// Default
 			Date date = new Date();
 			this.dateField.setText(this.dateFormat.format(date));
-			this.hourField.setValue(23);
-			this.minuteField.setValue(59);
+			this.getCurrentTime();
+			this.hourField.setValue(hour);
+			this.minuteField.setValue(minute);
 			this.checkTime.setSelected(true);
 		} else {
 			selectedRow = table.convertRowIndexToView(table.getSelectedRow());
 			Entry editE = listTable.getEintragAt(selectedRow);
 			this.stringField.setText(editE.getAufgabe());
-			this.dateField.setText(this.dateFormat.format(editE.getEnddate()));
-			this.hourField.setValue(editE.getHour());
-			this.minuteField.setValue(editE.getMinute());
 			if (!editE.withTime()) {
 				Date date = new Date();
+				isTime = false;
 				this.dateField.setText(this.dateFormat.format(date));
-				this.hourField.setValue(23);
-				this.minuteField.setValue(59);
+				this.getCurrentTime();
+				this.hourField.setValue(hour);
+				this.minuteField.setValue(minute);
 				this.dateField.setEnabled(false);
 				this.hourField.setEnabled(false);
 				this.minuteField.setEnabled(false);
+			}
+			else{
+				this.dateField.setText(this.dateFormat.format(editE.getEnddate()));
+				this.hourField.setValue(editE.getHour());
+				this.minuteField.setValue(editE.getMinute());
 			}
 			this.checkTime.setSelected(editE.withTime());
 		}

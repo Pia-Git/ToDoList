@@ -3,7 +3,6 @@ package elements;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
@@ -159,8 +158,14 @@ public class ToDoList extends JFrame {
 	
 	public void delete(){
 		if (tablelist.getSelectedRow() > -1) {
-			int selectRow = tablelist.convertRowIndexToView(tablelist.getSelectedRow());
-			lt.removeRow(selectRow);
+			int result = JOptionPane.showConfirmDialog(null,
+					"Do you really want to delete the selected entry?",
+					"Delete entry", JOptionPane.YES_NO_OPTION,
+					JOptionPane.PLAIN_MESSAGE);
+			if (result == 0){
+				int selectRow = tablelist.convertRowIndexToView(tablelist.getSelectedRow());
+				lt.removeRow(selectRow);
+			}
 		}
 	}
 	
