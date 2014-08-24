@@ -42,6 +42,12 @@ public class Main {
 			}
 		}
 		Locale.setDefault(Locale.ENGLISH);
+		//waiting time for splash
+		try {
+			Thread.sleep(1500);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		ToDoList app = new ToDoList();
 		app.start(); 
 	}
