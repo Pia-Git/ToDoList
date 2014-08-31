@@ -1,10 +1,8 @@
 package elements;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Point;
-import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
@@ -60,7 +58,7 @@ public class ToDoList extends JFrame {
 		fs = new FileServer();
 		setTitle("ToDoList");
 		setSize(700, 400);
-		centerWindow();
+		setLocationRelativeTo(null); //center window
 		setLayout(new BorderLayout());
 		ImageIcon icon = new ImageIcon(ClassLoader.getSystemResource("image/logo.png"));
 		setIconImage(icon.getImage());
@@ -335,12 +333,6 @@ public class ToDoList extends JFrame {
 	
 	public void setFileModified(){
 		setTitle(fileTitle+"* - ToDoList");
-	}
-
-	public void centerWindow() {
-		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-		setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2
-				- this.getSize().height / 2);
 	}
 }
 

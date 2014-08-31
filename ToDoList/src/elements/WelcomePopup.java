@@ -1,8 +1,6 @@
 package elements;
 
-import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.Toolkit;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -30,7 +28,7 @@ public class WelcomePopup extends JDialog {
 		setTitle("Welcome to ToDoList!");
 		setModal(true);
 		setSize(300, 100);
-		centerWindow();
+		setLocationRelativeTo(null); 
 		JPanel pane = new JPanel();
 		pane.setLayout(new GridLayout(1, 2));
 		JButton newFile = new JButton("New file");
@@ -52,11 +50,5 @@ public class WelcomePopup extends JDialog {
 	
 	public void showPopup(){
 		setVisible(true);
-	}
-	
-	public void centerWindow() {
-		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-		setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2
-				- this.getSize().height / 2);
 	}
 }
